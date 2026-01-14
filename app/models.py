@@ -1,47 +1,56 @@
-# 模拟数据存储 - 与原始功能保持一致
-class Item:
-    """项目数据模型"""
-    def __init__(self, id, name, description):
-        self.id = id
-        self.name = name
-        self.description = description
-    
-    def to_dict(self):
-        """转换为字典格式"""
+from datetime import datetime
+from typing import List, Optional
+
+from app.extensions import db
+
+
+class Item(db.Model):
+    """示例数据模型：用于 /api/data 接口."""
+
+    __tablename__ = "items"
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128), nullable=False)
+    description = db.Column(db.String(256), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
+    def to_dict(self) -> dict:
+        """转换为字典格式，兼容原来的返回结构."""
         return {
-            'id': self.id,
-            'name': self.name,
-            'description': self.description
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
         }
 
-class ItemRepository:
-    """项目数据仓库，处理数据的CRUD操作"""
-    def __init__(self):
-        # 初始化模拟数据
-        self.items = [
-            Item(1, 'Item 1', 'First item'),
-            Item(2, 'Item 2', 'Second item'),
-            Item(3, 'Item 3', 'Third item')
-        ]
-        self.next_id = 4
-    
-    def get_all(self):
-        """获取所有项目"""
-        return [item.to_dict() for item in self.items]
-    
-    def get_by_id(self, item_id):
-        """根据ID获取项目"""
-        for item in self.items:
-            if item.id == item_id:
-                return item.to_dict()
-        return None
-    
-    def create(self, name, description):
-        """创建新项目"""
-        new_item = Item(self.next_id, name, description)
-        self.items.append(new_item)
-        self.next_id += 1
-        return new_item.to_dict()
 
-# 创建全局仓库实例
-item_repo = ItemRepository()
+def list_items() -> List[Item]:
+    """获取所有 Item 记录."""
+    return Item.query.order_by(Item.id.asc()).all()
+
+
+def get_by_id(item_id: int) -> Optional[Item]:
+    """根据 ID 获取单条记录."""
+    return Item.query.get(item_id)
+
+
+def create_item(name: str, description: str) -> Item:
+    """创建新 Item 记录并返回模型实例."""
+    item = Item(name=name, description=description)
+    db.session.add(item)
+    db.session.commit()
+    return item
+
+
+def seed_items_if_empty() -> None:
+    """在应用启动时，如果表为空则写入一些初始数据."""
+    if Item.query.first() is not None:
+        return
+
+    samples = [
+        Item(name="Item 1", description="First item"),
+        Item(name="Item 2", description="Second item"),
+        Item(name="Item 3", description="Third item"),
+    ]
+    db.session.add_all(samples)
+    db.session.commit()
