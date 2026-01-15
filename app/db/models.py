@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List, Optional
 
-from app.extensions import db
+from app.server.extensions import db
 
 
 class Item(db.Model):
@@ -54,3 +54,4 @@ def seed_items_if_empty() -> None:
     ]
     db.session.add_all(samples)
     db.session.commit()
+

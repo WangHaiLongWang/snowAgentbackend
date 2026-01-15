@@ -1,7 +1,7 @@
 from flask import jsonify, request
 
-from app.api import bp
-from app.models import Item, create_item, get_by_id, list_items
+from app.control import bp
+from app.db import Item, create_item, get_by_id, list_items
 
 
 @bp.get("/health")
@@ -63,4 +63,5 @@ def not_found(_error):
 @bp.errorhandler(500)
 def internal_error(_error):
     return jsonify({"error": "Internal server error"}), 500
+
 
