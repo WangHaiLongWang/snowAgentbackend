@@ -1,4 +1,5 @@
 from flask import Flask
+from flasgger import Swagger
 
 from app.server.config import config
 from app.server.extensions import db
@@ -11,6 +12,19 @@ def create_app(config_name: str = "default") -> Flask:
 
     # 初始化扩展（数据库等）
     db.init_app(app)
+
+    # Swagger / OpenAPI 文档（访问：/apidocs/）
+    Swagger(
+        app,
+        template={
+            "swagger": "2.0",
+            "info": {
+                "title": "SnowAgent Backend API",
+                "description": "Backend API documentation (Swagger UI).",
+                "version": "1.0.0",
+            },
+        },
+    )
 
     # 注册蓝图（统一 API，无模板渲染）
     from app.control import bp as api_bp
