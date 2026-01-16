@@ -163,3 +163,49 @@ def internal_error(_error):
     return jsonify({"error": "Internal server error"}), 500
 
 
+# ==================== 雪场相关 API ====================
+
+
+@bp.get("/api/resort/<resort_id>/weather")
+def get_resort_weather(resort_id: str):
+    """获取雪场天气信息（模拟数据，实际应从外部API获取）"""
+    # 模拟天气数据，实际项目中应该从 snow-forecast.com 或其他天气API获取
+    weather_data = {
+        "currentTemp": -8,
+        "condition": "Snow",
+        "windSpeed": 15,
+        "humidity": 75,
+        "visibility": 5,
+        "snowProbability": 80,
+        "forecast": [
+            {"date": "今天", "snowfall": 5, "minTemp": -12, "maxTemp": -5},
+            {"date": "明天", "snowfall": 8, "minTemp": -15, "maxTemp": -3},
+            {"date": "后天", "snowfall": 3, "minTemp": -10, "maxTemp": -2},
+            {"date": "第4天", "snowfall": 0, "minTemp": -8, "maxTemp": 0},
+            {"date": "第5天", "snowfall": 2, "minTemp": -6, "maxTemp": 2},
+            {"date": "第6天", "snowfall": 6, "minTemp": -9, "maxTemp": -1},
+        ],
+    }
+    return jsonify(weather_data)
+
+
+@bp.get("/api/resort/<resort_id>/map")
+def get_resort_map(resort_id: str):
+    """获取雪场地图信息"""
+    # 模拟地图数据，实际项目中应该存储真实的地图图片URL或使用地图服务
+    map_data = {
+        "imageUrl": f"https://via.placeholder.com/800x600?text={resort_id}雪场地图",
+        "width": 800,
+        "height": 600,
+    }
+    return jsonify(map_data)
+
+
+@bp.get("/api/resort/<resort_id>/slopes")
+def get_resort_slopes(resort_id: str):
+    """获取雪场的雪道列表"""
+    from app.db.models import get_slopes_by_resort
+
+    slopes = get_slopes_by_resort(resort_id)
+    return jsonify([slope.to_dict() for slope in slopes])
+

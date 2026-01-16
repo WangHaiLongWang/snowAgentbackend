@@ -35,9 +35,15 @@ def create_app(config_name: str = "default") -> Flask:
     with app.app_context():
         db.create_all()
         try:
-            from app.db import seed_items_if_empty
+            from app.db.models import (
+                seed_items_if_empty,
+                seed_resorts_if_empty,
+                seed_slopes_if_empty,
+            )
 
             seed_items_if_empty()
+            seed_resorts_if_empty()
+            seed_slopes_if_empty()
         except Exception:
             # 避免启动因种子数据失败而中断（例如迁移阶段、表结构变化等）
             pass
