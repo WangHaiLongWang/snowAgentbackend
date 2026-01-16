@@ -1,5 +1,6 @@
 from flask import Flask
 from flasgger import Swagger
+from flask_migrate import Migrate
 
 from app.server.config import config
 from app.server.extensions import db
@@ -12,6 +13,9 @@ def create_app(config_name: str = "default") -> Flask:
 
     # 初始化扩展（数据库等）
     db.init_app(app)
+    
+    # 初始化数据库迁移工具
+    migrate = Migrate(app, db)
 
     # Swagger / OpenAPI 文档（访问：/apidocs/）
     Swagger(

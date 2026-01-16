@@ -53,6 +53,7 @@ class Slope(db.Model):
     difficulty = db.Column(db.String(16), nullable=False)  # 初级、中级、高级、专家
     length = db.Column(db.Integer, nullable=False)  # 长度（米）
     elevation = db.Column(db.Integer, nullable=False)  # 海拔（米）
+    image_url = db.Column(db.String(256))  # 雪道图片URL
     notes = db.Column(db.String(256))  # 备注
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
@@ -66,6 +67,7 @@ class Slope(db.Model):
             "difficulty": self.difficulty,
             "length": self.length,
             "elevation": self.elevation,
+            "image_url": self.image_url,
             "notes": self.notes,
         }
 
@@ -131,6 +133,9 @@ def seed_slopes_if_empty() -> None:
     if Slope.query.first() is not None:
         return
 
+    # 雪道图片URL
+    SLOPE_IMAGE_URL = "http://115.159.78.59:8888/down/ZR1Ew6sSwhCI.jpg"
+    
     # 北大湖雪道
     beidahu_slopes = [
         Slope(
@@ -140,6 +145,7 @@ def seed_slopes_if_empty() -> None:
             difficulty="初级",
             length=800,
             elevation=1200,
+            image_url=SLOPE_IMAGE_URL,
             notes="适合初学者",
         ),
         Slope(
@@ -149,6 +155,7 @@ def seed_slopes_if_empty() -> None:
             difficulty="中级",
             length=1200,
             elevation=1400,
+            image_url=SLOPE_IMAGE_URL,
         ),
         Slope(
             resort_id="beidahu",
@@ -157,6 +164,7 @@ def seed_slopes_if_empty() -> None:
             difficulty="高级",
             length=1500,
             elevation=1600,
+            image_url=SLOPE_IMAGE_URL,
             notes="部分区域维护中",
         ),
     ]
@@ -170,6 +178,7 @@ def seed_slopes_if_empty() -> None:
             difficulty="初级",
             length=600,
             elevation=1100,
+            image_url=SLOPE_IMAGE_URL,
         ),
         Slope(
             resort_id="songhuahu",
@@ -178,6 +187,7 @@ def seed_slopes_if_empty() -> None:
             difficulty="中级",
             length=1000,
             elevation=1300,
+            image_url=SLOPE_IMAGE_URL,
         ),
     ]
 
@@ -190,6 +200,7 @@ def seed_slopes_if_empty() -> None:
             difficulty="专家",
             length=2000,
             elevation=2000,
+            image_url=SLOPE_IMAGE_URL,
             notes="高难度雪道",
         ),
     ]
