@@ -72,6 +72,78 @@ class Slope(db.Model):
         }
 
 
+class Weather(db.Model):
+    """雪场天气信息模型"""
+
+    __tablename__ = "weather"
+
+    id = db.Column(db.Integer, primary_key=True)
+    resort_id = db.Column(db.String(32), db.ForeignKey("resorts.id"), nullable=False)
+    date = db.Column(db.Date, nullable=False)
+    condition = db.Column(db.String(32), nullable=False)  # 天气状况
+    temp_high = db.Column(db.Integer)  # 最高温度（摄氏度）
+    temp_low = db.Column(db.Integer)  # 最低温度（摄氏度）
+    snowfall_total = db.Column(db.Float)  # 总降雪量（厘米）
+    snowfall_new = db.Column(db.Float)  # 新增降雪量（厘米）
+    wind_speed = db.Column(db.Integer)  # 风速（km/h）
+    wind_direction = db.Column(db.String(16))  # 风向
+    visibility = db.Column(db.Integer)  # 能见度（km）
+    humidity = db.Column(db.Integer)  # 湿度（%）
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+
+    resort = db.relationship("Resort", backref="weather_records")
+
+    def to_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "resort_id": self.resort_id,
+            "date": self.date.isoformat() if self.date else None,
+            "condition": self.condition,
+            "temp_high": self.temp_high,
+            "temp_low": self.temp_low,
+            "snowfall_total": self.snowfall_total,
+            "snowfall_new": self.snowfall_new,
+            "wind_speed": self.wind_speed,
+            "wind_direction": self.wind_direction,
+            "visibility": self.visibility,
+            "humidity": self.humidity,
+            "updated_at": self.updated_at.isoformat() if self.updated_at else None,
+        }
+
+
+class CurrentWeather(db.Model):
+    """雪场当前天气信息模型"""
+
+    __tablename__ = "current_weather"
+
+    id = db.Column(db.Integer, primary_key=True)
+    resort_id = db.Column(db.String(32), db.ForeignKey("resorts.id"), nullable=False)
+    temperature = db.Column(db.Integer)  # 当前温度（摄氏度）
+    condition = db.Column(db.String(32))  # 天气状况
+    wind_speed = db.Column(db.Integer)  # 风速（km/h）
+    wind_direction = db.Column(db.String(16))  # 风向
+    visibility = db.Column(db.Integer)  # 能见度（km）
+    humidity = db.Column(db.Integer)  # 湿度（%）
+    snow_depth = db.Column(db.Float)  # 积雪深度（厘米）
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+
+    resort = db.relationship("Resort", backref="current_weather")
+
+    def to_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "resort_id": self.resort_id,
+            "temperature": self.temperature,
+            "condition": self.condition,
+            "wind_speed": self.wind_speed,
+            "wind_direction": self.wind_direction,
+            "visibility": self.visibility,
+            "humidity": self.humidity,
+            "snow_depth": self.snow_depth,
+            "updated_at": self.updated_at.isoformat() if self.updated_at else None,
+        }
+
+
 def list_items() -> List[Item]:
     """获取所有 Item 记录."""
     return Item.query.order_by(Item.id.asc()).all()
