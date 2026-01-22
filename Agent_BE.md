@@ -6,3 +6,4 @@
 5.我想加入相关Agent业务内容，关于LLm初始化 以及从其他网站中拿取北大湖滑雪场相关天气数据 列如https://www.snow-forecast.com/resorts/Beidahu/6day/mid， 以及获取历史的北大湖相关雪场的 雪道开放计划，给我一些架构建议和应该怎么做
 
 6 访问 https://www.snow-forecast.com/resorts/Beidahu/6day/mid ，将其内容总结一下，将当前天气内容能形成sqldb库表结构，在backend目录下，/app/task/文件夹下。 添加addWearch.py 文件，在此文件中编写相关任务的代码，以及能将内容，添加到对应的db数据库中。
+7.在/app/task 文件夹下addWearch.py我进行了手动的修改与调整,在extract_forecast方法中获取到的forecast 数据为 ['-23', '-22', '-23', '-20', '-21', '-24', '-22', '-22', '-24', '-22', '-20', '-17', '-15', '-14', '-17', '-19', '-19', '-20'], 'temperatureMAX': None, 'weather': ['clear', 'clear', 'clear', 'clear', 'some clouds', 'some clouds', 'some clouds', 'light snow', 'light snow', 'some clouds', 'some clouds', 'some clouds', 'cloudy', 'cloudy', 'light snow', 'light snow', 'light snow', 'snow shwrs']， 需要在 extract_forecast方法中添加 时间维度按照数据来构成。时间 数据按照 一天分为AM PM night, 一天为三个数据，从当天的AM开始， 直到最后一天的night

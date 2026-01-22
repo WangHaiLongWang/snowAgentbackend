@@ -43,7 +43,8 @@ def get_weather_data(resort_id, resort_name):
         forecast_data = extract_forecast(soup)
         
         print(f"6天天气预报{forecast_data}")
-        
+
+        return True
         # 保存到数据库
         save_weather_to_db(resort_id, current_weather_data, forecast_data)
         
@@ -58,13 +59,12 @@ def extract_current_weather(soup):
     """
     提取当前天气信息
     """
-    current_weather = []
+    current_weatherData = []
 
     try:
         
         # 示例选择器，实际需要根据页面结构调整
         temp_element = soup.find_all(class_='live-snow__table-row') 
-
         for temp in temp_element:
             # 这里需要根据实际页面结构调整选择器
             current_weather = {
@@ -87,13 +87,13 @@ def extract_current_weather(soup):
             if weather_element:
                 current_weather['weather'] = weather_element.get('alt', '')
                 
-            current_weather.append(current_weather)
+            current_weatherData.append(current_weather)
 
     except Exception as e:
         print(f"提取当前天气失败: {str(e)}")
         
-    print(f"提取当前天气成功: {str(current_weather)}")
-    return current_weather
+    print(f"提取当前天气成功: {str(current_weatherData)}")
+    return current_weatherData
 
 def extract_forecast(soup):
     """
@@ -103,43 +103,65 @@ def extract_forecast(soup):
     
     try:
         # 示例选择器，实际需要根据页面结构调整
-        forecast_days = soup.find_all(class_='forecast-table__table')
-        
-        for day in forecast_days:
-            day_data = {
-                'temperatureMin': None,
-                'temperatureMAX': None,
-                'weather': None,
-            }
-            # 提取所有最低温度 
-            temperatureMin_element = day.find('div', attrs={'data-row': 'temperature-min'}).find_all(class_='forecast-table__cell')
-            if temperatureMin_element:
-                temperatureMinData = []
-                for temperatureMinItem_element in temperatureMin_element:
-                    temperatureMinItemText = temperatureMinItem_element.find('div').text.strip()
-                    temperatureMinData.append(temperatureMinItemText)
-                day_data['temperatureMin'] = temperatureMinData
+        forecast_days = soup.find(class_='forecast-table__table')
+        day_data = {
+            'temperatureMin': None,
+            'temperatureMAX': None,
+            'weather': None,
+            'time': None,
+            'timeSlot': None
+        }
+        # 提取所有最低温度 
+        temperatureMin_element = forecast_days.find('tr', attrs={'data-row': 'temperature-min'}).find_all(class_='forecast-table__cell')
+        print(f"6天提取所有最低温度 {temperatureMin_element}")
+        if temperatureMin_element:
+            temperatureMinData = []
+            for temperatureMinItem_element in temperatureMin_element:
+                temperatureMinItemText = temperatureMinItem_element.find('div').text.strip()
+                temperatureMinData.append(temperatureMinItemText)
+            day_data['temperatureMin'] = temperatureMinData
+            
+        # 提取所有最高温度
+        temperatureMax_element = forecast_days.find('tr', attrs={'data-row': 'temperature-max'}).find_all(class_='forecast-table__cell')
+        if temperatureMax_element:
+            temperatureMaxData = []
+            for temperatureMaxItem_element in temperatureMax_element:
+                temperatureMaxItemText = temperatureMaxItem_element.find('div').text.strip()
+                temperatureMaxData.append(temperatureMaxItemText)
+            day_data['temperatureMin'] = temperatureMaxData               
+            
+        # 温度
+        weather_element = forecast_days.find('tr', attrs={'data-row': 'phrases'}).find_all(class_='forecast-table__cell')
+        if weather_element:
+            weatherData = []
+            for weatherItem_element in weather_element:
+                weatherText = weatherItem_element.find('span').text.strip()
+                weatherData.append(weatherText)
+            day_data['weather'] = weatherData               
+        #时间 数据按照 一天分为AM PM night, 一天为三个数据，从当天的AM开始， 直到最后一天的night
+        time_element = forecast_days.find_all(class_="forecast-table-days__content")
+        if time_element:
+            timeData = []
+            timeSlotData = []
+            timeSlot = ["AM", "PM", "night"]
+            for timeItem_element in time_element:
+                timeItemData = {
+                    'week': None,
+                    'month': None    
+                }
+                week_element = timeItem_element.find(class_='forecast-table-days__name').text.strip()
+                month_element = timeItem_element.find(class_='forecast-table-days__date').text.strip()
+                timeItemData['week'] = week_element
+                timeItemData['month'] = month_element
+                timeData.append(timeItemData)
                 
-            # 提取所有最高温度
-            temperatureMax_element = day.find('div', attrs={'data-row': 'temperature-max'}).find_all(class_='forecast-table__cell')
-            if temperatureMax_element:
-                temperatureMaxData = []
-                for temperatureMaxItem_element in temperatureMax_element:
-                    temperatureMaxItemText = temperatureMaxItem_element.find('div').text.strip()
-                    temperatureMaxData.append(temperatureMaxItemText)
-                day_data['temperatureMin'] = temperatureMaxData               
+                for timeSlotItem in timeSlot:
+                    timeSlotData.append(timeSlotItem)
                 
-            # 温度
-            weather_element = day.find('div', attrs={'data-row': 'phrases'}).find_all(class_='forecast-table__cell')
-            if weather_element:
-                weatherData = []
-                for weatherItem_element in weather_element:
-                    weatherText = weatherItem_element.find('span').text.strip()
-                    weatherData.append(weatherText)
-                day_data['weather'] = weatherData               
-            #时间 数据按照 一天分为AM PM night, 一天为三个数据，从当天的AM开始， 直到最后一天的night
+            day_data['time'] = timeData  
+            day_data['timeSlot'] = timeSlotData  
         
-            forecast.append(day_data)
+        forecast.append(day_data)
         
     except Exception as e:
         print(f"提取天气预报失败: {str(e)}")
