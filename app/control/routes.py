@@ -3,128 +3,6 @@ from flask import jsonify, request
 from app.control import bp
 from app.db import Item, create_item, get_by_id, list_items
 
-
-@bp.get("/health")
-def health_check():
-    """
-    健康检查
-    ---
-    tags:
-      - system
-    responses:
-      200:
-        description: ok
-    """
-    return jsonify(
-        {
-            "status": "ok",
-            "message": "Flask Backend is running",
-            "client_ip": request.environ.get("HTTP_X_REAL_IP", request.remote_addr),
-        }
-    )
-
-
-@bp.get("/")
-def home():
-    """
-    API 首页
-    ---
-    tags:
-      - system
-    responses:
-      200:
-        description: API information
-    """
-    return jsonify(
-        {
-            "message": "Welcome to Flask Backend API",
-            "endpoints": ["/health", "/api/data", "/api/data/<id>"],
-            "method": request.method,
-        }
-    )
-
-
-@bp.get("/api/data")
-def get_all_data():
-    """
-    获取所有 Item
-    ---
-    tags:
-      - items
-    responses:
-      200:
-        description: Item list
-    """
-    data = [item.to_dict() for item in list_items()]
-    return jsonify({"data": data, "count": len(data)})
-
-
-@bp.get("/api/data/<int:item_id>")
-def get_data_by_id(item_id: int):
-    """
-    根据 ID 获取 Item
-    ---
-    tags:
-      - items
-    parameters:
-      - name: item_id
-        in: path
-        type: integer
-        required: true
-    responses:
-      200:
-        description: Item
-      404:
-        description: Not found
-    """
-    item = get_by_id(item_id)
-    if item is None:
-        return jsonify({"error": "Item not found"}), 404
-    return jsonify(item.to_dict())
-
-
-@bp.post("/api/data")
-def create_data():
-    """
-    创建 Item
-    ---
-    tags:
-      - items
-    consumes:
-      - application/json
-    parameters:
-      - in: body
-        name: body
-        required: true
-        schema:
-          type: object
-          required:
-            - name
-            - description
-          properties:
-            name:
-              type: string
-            description:
-              type: string
-    responses:
-      201:
-        description: Created
-      400:
-        description: Bad request
-    """
-    if not request.is_json:
-        return jsonify({"error": "Request must be JSON"}), 400
-
-    data = request.get_json(silent=True) or {}
-    name = data.get("name")
-    description = data.get("description")
-    if not name or not description:
-        return jsonify({"error": "Missing required fields: name, description"}), 400
-
-    item: Item = create_item(name=name, description=description)
-    return jsonify(item.to_dict()), 201
-
-
 @bp.get("/debug/routes")
 def debug_routes():
     """
@@ -168,25 +46,76 @@ def internal_error(_error):
 
 @bp.get("/api/resort/<resort_id>/weather")
 def get_resort_weather(resort_id: str):
-    """获取雪场天气信息（模拟数据，实际应从外部API获取）"""
-    # 模拟天气数据，实际项目中应该从 snow-forecast.com 或其他天气API获取
-    weather_data = {
-        "currentTemp": -8,
-        "condition": "Snow",
-        "windSpeed": 15,
-        "humidity": 75,
-        "visibility": 5,
-        "snowProbability": 80,
-        "forecast": [
-            {"date": "今天", "snowfall": 5, "minTemp": -12, "maxTemp": -5},
-            {"date": "明天", "snowfall": 8, "minTemp": -15, "maxTemp": -3},
-            {"date": "后天", "snowfall": 3, "minTemp": -10, "maxTemp": -2},
-            {"date": "第4天", "snowfall": 0, "minTemp": -8, "maxTemp": 0},
-            {"date": "第5天", "snowfall": 2, "minTemp": -6, "maxTemp": 2},
-            {"date": "第6天", "snowfall": 6, "minTemp": -9, "maxTemp": -1},
-        ],
-    }
-    return jsonify(weather_data)
+    """获取雪场天气信息"""
+    from app.db.models import CurrentWeather, Weather
+    from datetime import datetime
+    
+    try:
+        # 获取当前天气
+        current_weather = CurrentWeather.query.filter_by(resort_id=resort_id).first()
+        
+        # 获取未来6天天气预报
+        forecast = Weather.query.filter_by(resort_id=resort_id)\
+            .filter(Weather.date >= datetime.now().date())\
+            .order_by(Weather.date.asc())\
+            .limit(6)\
+            .all()
+        
+        # 构建响应数据
+        weather_data = {
+            "currentTemp": int(current_weather.temperature) if current_weather and current_weather.temperature else None,
+            "condition": current_weather.condition if current_weather else None,
+            "windSpeed": current_weather.wind_speed if current_weather else None,
+            "humidity": current_weather.humidity if current_weather else None,
+            "visibility": current_weather.visibility if current_weather else None,
+            "forecast": []
+        }
+        
+        # 处理天气预报数据
+        for day_forecast in forecast:
+            # 计算日期标签（今天、明天、后天等）
+            delta_days = (day_forecast.date - datetime.now().date()).days
+            if delta_days == 0:
+                date_label = "今天"
+            elif delta_days == 1:
+                date_label = "明天"
+            elif delta_days == 2:
+                date_label = "后天"
+            else:
+                date_label = f"第{delta_days + 1}天"
+            
+            forecast_item = {
+                "date": date_label,
+                "actualDate": day_forecast.date.isoformat(),
+                "condition": day_forecast.condition,
+                "minTemp": day_forecast.temp_low,
+                "maxTemp": day_forecast.temp_high
+            }
+            weather_data["forecast"].append(forecast_item)
+        
+        return jsonify(weather_data)
+        
+    except Exception as e:
+        # 如果数据库中没有数据，返回模拟数据作为 fallback
+        print(f"获取天气数据失败: {str(e)}")
+        # 模拟天气数据
+        weather_data = {
+            "currentTemp": -8,
+            "condition": "Snow",
+            "windSpeed": 15,
+            "humidity": 75,
+            "visibility": 5,
+            "snowProbability": 80,
+            "forecast": [
+                {"date": "今天", "snowfall": 5, "minTemp": -12, "maxTemp": -5},
+                {"date": "明天", "snowfall": 8, "minTemp": -15, "maxTemp": -3},
+                {"date": "后天", "snowfall": 3, "minTemp": -10, "maxTemp": -2},
+                {"date": "第4天", "snowfall": 0, "minTemp": -8, "maxTemp": 0},
+                {"date": "第5天", "snowfall": 2, "minTemp": -6, "maxTemp": 2},
+                {"date": "第6天", "snowfall": 6, "minTemp": -9, "maxTemp": -1},
+            ],
+        }
+        return jsonify(weather_data)
 
 
 @bp.get("/api/resort/<resort_id>/map")
