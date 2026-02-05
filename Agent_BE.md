@@ -12,3 +12,8 @@
 current_weather_data数据为 [{'temperature': '-25', 'wind': '35', 'weather': 'clear'}, {'temperature': '-22', 'wind': '25', 'weather': 'clear'}, {'temperature': '-19', 'wind': '20', 'weather': 'cloud'}]，根据以上的数据帮我更新 save_weather_to_db 方法以及数据库表内容
 
 9. 根据数据库雪场相关天气，对/app/control/routes.py文件中的雪场相关API进行更新，以及前端页面渲染相关字段进行更新
+10. 我要在backend/app/task,中创建一共py脚本，需要对kml文件进行处理，处理后的文件放到 snowagent-web\public\中 并更新其后面的0.0.0版本 为0.0.1
+11. 我要处理一些相关于cesium地图数据，比如 雪场的kml文件，一、更新所有 Placemark标签中的altitudeMode标签为 <altitudeMode>clampToGround</altitudeMode>， 二、在所有的LineString标签中添加<tessellate>1</tessellate>，三、将kml文件中的样式<Icon> <href>https://earth.google.com/earth/document/icon?color=1976d2&amp;id=2000&amp;scale=4</href> </Icon> 其中id=2000 替换为<Icon> <href>skiing.svg</href> </Icon>， 其他都替换为 <Icon> <href>local..svg</href> </Icon>
+12. 一、更新脚本内容将kml文件中的样式<Icon> <href>https://earth.google.com/earth/document/icon?color=1976d2&amp;id=2000&amp;scale=4</href> </Icon> 其中id=2000 替换为<Icon> <href>/images/skiing.svg</href> </Icon>， 其他都替换为 <Icon> <href>/iamges/local.svg</href> </Icon>。二、给所有ns1:CascadingStyle标签的id 给到下面的Style标签中，没有id就不给一、更新脚本内容将kml文件中的样式<Icon> <href>https://earth.google.com/earth/document/icon?color=1976d2&amp;id=2000&amp;scale=4</href> </Icon> 其中id=2000 替换为<Icon> <href>/images/skiing.svg</href> </Icon>， 其他都替换为 <Icon> <href>/iamges/local.svg</href> </Icon>。二、给所有ns1:CascadingStyle标签的id 给到下面的Style标签中，没有id就不给
+13. 一、更新脚本内容将kml文件中的样式去除所有 hotSpot标签和标签内容。 将CascadingStyle标签中的id 给到其下的Style标签中，没有id就不给
+14. hotSpot标签需要在对kml文件后进行处理生成后，进行对hotSpot标签的处理。再次更新脚本

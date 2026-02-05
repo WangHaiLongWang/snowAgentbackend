@@ -28,3 +28,5 @@
 /https
 
 /__pycache__/*
+
+.env
