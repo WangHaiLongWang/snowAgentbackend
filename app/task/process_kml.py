@@ -207,7 +207,7 @@ def main():
     主函数
     """
     # 输入文件路径
-    input_file = r'd:\ProjectS\snowagent\frontend\snowagent-web\public\koktokay1.0.0.kml'
+    input_file = r'd:\ProjectS\snowagent\frontend\snowagent-web\public\beidahu1.0.3.kml'
     
     # 检查输入文件是否存在
     if not os.path.exists(input_file):
