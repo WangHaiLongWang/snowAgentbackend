@@ -47,10 +47,18 @@ def internal_error(_error):
 @bp.get("/api/resort/<resort_id>/weather")
 def get_resort_weather(resort_id: str):
     """获取雪场天气信息"""
-    from app.db.models import CurrentWeather, Weather
-    from datetime import datetime
+    from app.db.models import CurrentWeather, Weather, Resort
+    from datetime import datetime, timedelta
+    import logging
+    
+    logger = logging.getLogger('weather_api')
     
     try:
+        # 验证雪场是否存在
+        resort = Resort.query.get(resort_id)
+        if not resort:
+            return jsonify({"error": "雪场不存在"}), 404
+        
         # 获取当前天气
         current_weather = CurrentWeather.query.filter_by(resort_id=resort_id).first()
         
@@ -59,7 +67,7 @@ def get_resort_weather(resort_id: str):
             .filter(Weather.date >= datetime.now().date())\
             .order_by(Weather.date.asc())\
             .limit(6)\
-            .all()
+            .all()\
         
         # 构建响应数据
         weather_data = {
@@ -68,6 +76,9 @@ def get_resort_weather(resort_id: str):
             "windSpeed": current_weather.wind_speed if current_weather else None,
             "humidity": current_weather.humidity if current_weather else None,
             "visibility": current_weather.visibility if current_weather else None,
+            "snowDepth": current_weather.snow_depth if current_weather else None,
+            "windDirection": current_weather.wind_direction if current_weather else None,
+            "updatedAt": current_weather.updated_at.isoformat() if current_weather and current_weather.updated_at else None,
             "forecast": []
         }
         
@@ -89,15 +100,22 @@ def get_resort_weather(resort_id: str):
                 "actualDate": day_forecast.date.isoformat(),
                 "condition": day_forecast.condition,
                 "minTemp": day_forecast.temp_low,
-                "maxTemp": day_forecast.temp_high
+                "maxTemp": day_forecast.temp_high,
+                "windSpeed": day_forecast.wind_speed,
+                "windDirection": day_forecast.wind_direction,
+                "humidity": day_forecast.humidity,
+                "visibility": day_forecast.visibility,
+                "snowfallTotal": day_forecast.snowfall_total,
+                "snowfallNew": day_forecast.snowfall_new
             }
             weather_data["forecast"].append(forecast_item)
         
+        logger.info(f"成功获取雪场 {resort.name} 的天气信息")
         return jsonify(weather_data)
         
     except Exception as e:
         # 如果数据库中没有数据，返回模拟数据作为 fallback
-        print(f"获取天气数据失败: {str(e)}")
+        logger.error(f"获取天气数据失败: {str(e)}")
         # 模拟天气数据
         weather_data = {
             "currentTemp": -8,
@@ -105,14 +123,16 @@ def get_resort_weather(resort_id: str):
             "windSpeed": 15,
             "humidity": 75,
             "visibility": 5,
+            "snowDepth": 120,
+            "windDirection": "西北风",
             "snowProbability": 80,
             "forecast": [
-                {"date": "今天", "snowfall": 5, "minTemp": -12, "maxTemp": -5},
-                {"date": "明天", "snowfall": 8, "minTemp": -15, "maxTemp": -3},
-                {"date": "后天", "snowfall": 3, "minTemp": -10, "maxTemp": -2},
-                {"date": "第4天", "snowfall": 0, "minTemp": -8, "maxTemp": 0},
-                {"date": "第5天", "snowfall": 2, "minTemp": -6, "maxTemp": 2},
-                {"date": "第6天", "snowfall": 6, "minTemp": -9, "maxTemp": -1},
+                {"date": "今天", "actualDate": datetime.now().date().isoformat(), "snowfall": 5, "minTemp": -12, "maxTemp": -5, "condition": "Snow"},
+                {"date": "明天", "actualDate": (datetime.now() + timedelta(days=1)).date().isoformat(), "snowfall": 8, "minTemp": -15, "maxTemp": -3, "condition": "Snow"},
+                {"date": "后天", "actualDate": (datetime.now() + timedelta(days=2)).date().isoformat(), "snowfall": 3, "minTemp": -10, "maxTemp": -2, "condition": "Partly Cloudy"},
+                {"date": "第4天", "actualDate": (datetime.now() + timedelta(days=3)).date().isoformat(), "snowfall": 0, "minTemp": -8, "maxTemp": 0, "condition": "Sunny"},
+                {"date": "第5天", "actualDate": (datetime.now() + timedelta(days=4)).date().isoformat(), "snowfall": 2, "minTemp": -6, "maxTemp": 2, "condition": "Snow"},
+                {"date": "第6天", "actualDate": (datetime.now() + timedelta(days=5)).date().isoformat(), "snowfall": 6, "minTemp": -9, "maxTemp": -1, "condition": "Snow"},
             ],
         }
         return jsonify(weather_data)

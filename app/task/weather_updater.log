@@ -1,0 +1,119 @@
+2026-02-11 10:34:31,012 - weather_updater - INFO - 天气数据更新调度器已启动，每天4次自动更新
+2026-02-11 10:34:31,015 - weather_updater - INFO - 正在获取北大湖的天气数据...
+2026-02-11 10:34:33,782 - weather_updater - INFO - 成功保存天气数据到数据库
+2026-02-11 10:34:33,782 - weather_updater - INFO - 成功获取并保存北大湖的天气数据
+2026-02-11 10:34:33,783 - weather_updater - INFO - 正在获取松花湖的天气数据...
+2026-02-11 10:34:34,601 - weather_updater - ERROR - 获取松花湖天气数据失败: 404 Client Error: Not Found for url: https://www.snow-forecast.com/resorts/SonghuaLake/6day/mid
+2026-02-11 10:34:34,602 - weather_updater - INFO - 正在获取可可托海的天气数据...
+2026-02-11 10:34:35,444 - weather_updater - ERROR - 获取可可托海天气数据失败: 404 Client Error: Not Found for url: https://www.snow-forecast.com/resorts/Koktokay/6day/mid
+2026-02-11 10:34:35,445 - weather_updater - INFO - 所有雪场天气数据更新完成
+2026-02-11 10:35:19,446 - weather_updater - INFO - 天气数据更新调度器已启动，每天4次自动更新
+2026-02-11 10:35:19,447 - weather_updater - INFO - 正在获取北大湖的天气数据...
+2026-02-11 10:35:21,458 - weather_updater - INFO - 成功保存天气数据到数据库
+2026-02-11 10:35:21,458 - weather_updater - INFO - 成功获取并保存北大湖的天气数据
+2026-02-11 10:35:21,459 - weather_updater - INFO - 正在获取松花湖的天气数据...
+2026-02-11 10:35:22,256 - weather_updater - ERROR - 获取松花湖天气数据失败: 404 Client Error: Not Found for url: https://www.snow-forecast.com/resorts/Songhua-Lake/6day/mid
+2026-02-11 10:35:22,258 - weather_updater - INFO - 正在获取可可托海的天气数据...
+2026-02-11 10:35:23,850 - weather_updater - ERROR - 获取可可托海天气数据失败: 404 Client Error: Not Found for url: https://www.snow-forecast.com/resorts/Kok-Tokay/6day/mid
+2026-02-11 10:35:23,851 - weather_updater - INFO - 所有雪场天气数据更新完成
+2026-02-11 10:36:12,789 - weather_updater - INFO - 天气数据更新调度器已启动，每天4次自动更新
+2026-02-11 10:36:12,789 - weather_updater - INFO - 正在获取北大湖的天气数据...
+2026-02-11 10:36:14,107 - weather_updater - INFO - 成功保存天气数据到数据库
+2026-02-11 10:36:14,108 - weather_updater - INFO - 成功获取并保存北大湖的天气数据
+2026-02-11 10:36:14,108 - weather_updater - INFO - 正在获取松花湖的天气数据...
+2026-02-11 10:36:16,310 - weather_updater - ERROR - 获取松花湖天气数据失败: 404 Client Error: Not Found for url: https://www.snow-forecast.com/resorts/Songhua-Lake/6day/mid
+2026-02-11 10:36:16,310 - weather_updater - INFO - 正在获取可可托海的天气数据...
+2026-02-11 10:36:17,073 - weather_updater - ERROR - 获取可可托海天气数据失败: 404 Client Error: Not Found for url: https://www.snow-forecast.com/resorts/Kok-Tokay/6day/mid
+2026-02-11 10:36:17,073 - weather_updater - INFO - 所有雪场天气数据更新完成
+2026-02-11 10:37:31,172 - weather_updater - INFO - 天气数据更新调度器已启动，每天4次自动更新
+2026-02-11 10:37:31,172 - weather_updater - INFO - 正在获取北大湖的天气数据...
+2026-02-11 10:37:32,859 - weather_updater - INFO - 成功保存天气数据到数据库
+2026-02-11 10:37:32,859 - weather_updater - INFO - 成功获取并保存北大湖的天气数据
+2026-02-11 10:37:32,860 - weather_updater - INFO - 正在获取松花湖的天气数据...
+2026-02-11 10:37:33,661 - weather_updater - ERROR - 获取松花湖天气数据失败: 404 Client Error: Not Found for url: https://www.snow-forecast.com/resorts/Songhua-Lake/6day/mid
+2026-02-11 10:37:33,673 - weather_updater - INFO - 成功保存天气数据到数据库
+2026-02-11 10:37:33,673 - weather_updater - INFO - 为松花湖保存默认天气数据
+2026-02-11 10:37:33,674 - weather_updater - INFO - 正在获取可可托海的天气数据...
+2026-02-11 10:37:34,478 - weather_updater - ERROR - 获取可可托海天气数据失败: 404 Client Error: Not Found for url: https://www.snow-forecast.com/resorts/Kok-Tokay/6day/mid
+2026-02-11 10:37:34,489 - weather_updater - INFO - 成功保存天气数据到数据库
+2026-02-11 10:37:34,489 - weather_updater - INFO - 为可可托海保存默认天气数据
+2026-02-11 10:37:34,490 - weather_updater - INFO - 所有雪场天气数据更新完成
+2026-02-11 10:38:39,645 - weather_updater - INFO - 天气数据更新调度器已启动，每天4次自动更新
+2026-02-11 10:38:39,650 - weather_updater - INFO - 添加新雪场: 禾木
+2026-02-11 10:38:39,656 - weather_updater - INFO - 正在获取北大湖的天气数据...
+2026-02-11 10:38:41,358 - weather_updater - INFO - 成功保存天气数据到数据库
+2026-02-11 10:38:41,358 - weather_updater - INFO - 成功获取并保存北大湖的天气数据
+2026-02-11 10:38:41,359 - weather_updater - INFO - 正在获取松花湖的天气数据...
+2026-02-11 10:38:42,647 - weather_updater - ERROR - 获取松花湖天气数据失败: 404 Client Error: Not Found for url: https://www.snow-forecast.com/resorts/Songhua-Lake/6day/mid
+2026-02-11 10:38:42,656 - weather_updater - INFO - 成功保存天气数据到数据库
+2026-02-11 10:38:42,656 - weather_updater - INFO - 为松花湖保存默认天气数据
+2026-02-11 10:38:42,658 - weather_updater - INFO - 正在获取可可托海的天气数据...
+2026-02-11 10:38:44,375 - weather_updater - ERROR - 获取可可托海天气数据失败: 404 Client Error: Not Found for url: https://www.snow-forecast.com/resorts/Kok-Tokay/6day/mid
+2026-02-11 10:38:44,383 - weather_updater - INFO - 成功保存天气数据到数据库
+2026-02-11 10:38:44,383 - weather_updater - INFO - 为可可托海保存默认天气数据
+2026-02-11 10:38:44,384 - weather_updater - INFO - 正在获取禾木的天气数据...
+2026-02-11 10:38:45,403 - weather_updater - ERROR - 获取禾木天气数据失败: 404 Client Error: Not Found for url: https://www.snow-forecast.com/resorts/Hemu/6day/mid
+2026-02-11 10:38:45,413 - weather_updater - INFO - 成功保存天气数据到数据库
+2026-02-11 10:38:45,413 - weather_updater - INFO - 为禾木保存默认天气数据
+2026-02-11 10:38:45,414 - weather_updater - INFO - 所有雪场天气数据更新完成
+2026-02-11 10:39:23,005 - weather_updater - INFO - 正在获取北大湖的天气数据...
+2026-02-11 10:39:25,473 - weather_updater - INFO - 成功保存天气数据到数据库
+2026-02-11 10:39:25,473 - weather_updater - INFO - 成功获取并保存北大湖的天气数据
+2026-02-11 10:39:25,474 - weather_updater - INFO - 正在获取松花湖的天气数据...
+2026-02-11 10:39:26,301 - weather_updater - ERROR - 获取松花湖天气数据失败: 404 Client Error: Not Found for url: https://www.snow-forecast.com/resorts/Songhua-Lake/6day/mid
+2026-02-11 10:39:26,310 - weather_updater - INFO - 成功保存天气数据到数据库
+2026-02-11 10:39:26,310 - weather_updater - INFO - 为松花湖保存默认天气数据
+2026-02-11 10:39:26,311 - weather_updater - INFO - 正在获取可可托海的天气数据...
+2026-02-11 10:39:28,456 - weather_updater - ERROR - 获取可可托海天气数据失败: 404 Client Error: Not Found for url: https://www.snow-forecast.com/resorts/Kok-Tokay/6day/mid
+2026-02-11 10:39:28,465 - weather_updater - INFO - 成功保存天气数据到数据库
+2026-02-11 10:39:28,465 - weather_updater - INFO - 为可可托海保存默认天气数据
+2026-02-11 10:39:28,466 - weather_updater - INFO - 正在获取禾木的天气数据...
+2026-02-11 10:39:29,700 - weather_updater - ERROR - 获取禾木天气数据失败: 404 Client Error: Not Found for url: https://www.snow-forecast.com/resorts/Hemu/6day/mid
+2026-02-11 10:39:29,709 - weather_updater - INFO - 成功保存天气数据到数据库
+2026-02-11 10:39:29,709 - weather_updater - INFO - 为禾木保存默认天气数据
+2026-02-11 10:39:29,710 - weather_updater - INFO - 所有雪场天气数据更新完成
+2026-02-11 10:39:29,710 - weather_updater - INFO - 天气数据更新完成，退出程序
+2026-02-11 16:28:20,121 - weather_updater - INFO - 正在获取北大湖的天气数据...
+2026-02-11 16:28:30,153 - weather_updater - ERROR - 获取当前天气数据失败: HTTPSConnectionPool(host='api.openweathermap.org', port=443): Max retries exceeded with url: /data/2.5/weather?lat=43.8833&lon=126.4167&appid=004d182648179f8a0ea148f56c0840ea&units=metric&lang=zh_cn (Caused by ConnectTimeoutError(<HTTPSConnection(host='api.openweathermap.org', port=443) at 0x1e68cf59310>, 'Connection to api.openweathermap.org timed out. (connect timeout=10)'))
+2026-02-11 16:28:40,155 - weather_updater - ERROR - 获取天气预报数据失败: HTTPSConnectionPool(host='api.openweathermap.org', port=443): Max retries exceeded with url: /data/2.5/forecast?lat=43.8833&lon=126.4167&appid=004d182648179f8a0ea148f56c0840ea&units=metric&lang=zh_cn (Caused by ConnectTimeoutError(<HTTPSConnection(host='api.openweathermap.org', port=443) at 0x1e68cf59940>, 'Connection to api.openweathermap.org timed out. (connect timeout=10)'))
+2026-02-11 16:28:40,175 - weather_updater - INFO - 成功保存天气数据到数据库
+2026-02-11 16:28:40,175 - weather_updater - INFO - 成功获取并保存北大湖的天气数据
+2026-02-11 16:28:40,175 - weather_updater - INFO - 正在获取松花湖的天气数据...
+2026-02-11 16:28:50,177 - weather_updater - ERROR - 获取当前天气数据失败: HTTPSConnectionPool(host='api.openweathermap.org', port=443): Max retries exceeded with url: /data/2.5/weather?lat=43.8667&lon=126.35&appid=004d182648179f8a0ea148f56c0840ea&units=metric&lang=zh_cn (Caused by ConnectTimeoutError(<HTTPSConnection(host='api.openweathermap.org', port=443) at 0x1e68cf8c710>, 'Connection to api.openweathermap.org timed out. (connect timeout=10)'))
+2026-02-11 16:29:00,195 - weather_updater - ERROR - 获取天气预报数据失败: HTTPSConnectionPool(host='api.openweathermap.org', port=443): Max retries exceeded with url: /data/2.5/forecast?lat=43.8667&lon=126.35&appid=004d182648179f8a0ea148f56c0840ea&units=metric&lang=zh_cn (Caused by ConnectTimeoutError(<HTTPSConnection(host='api.openweathermap.org', port=443) at 0x1e68cf8d6d0>, 'Connection to api.openweathermap.org timed out. (connect timeout=10)'))
+2026-02-11 16:29:00,206 - weather_updater - INFO - 成功保存天气数据到数据库
+2026-02-11 16:29:00,206 - weather_updater - INFO - 成功获取并保存松花湖的天气数据
+2026-02-11 16:29:00,206 - weather_updater - INFO - 正在获取可可托海的天气数据...
+2026-02-11 16:29:10,217 - weather_updater - ERROR - 获取当前天气数据失败: HTTPSConnectionPool(host='api.openweathermap.org', port=443): Max retries exceeded with url: /data/2.5/weather?lat=47.1667&lon=89.9&appid=004d182648179f8a0ea148f56c0840ea&units=metric&lang=zh_cn (Caused by ConnectTimeoutError(<HTTPSConnection(host='api.openweathermap.org', port=443) at 0x1e68cf8e1e0>, 'Connection to api.openweathermap.org timed out. (connect timeout=10)'))
+2026-02-11 16:29:20,221 - weather_updater - ERROR - 获取天气预报数据失败: HTTPSConnectionPool(host='api.openweathermap.org', port=443): Max retries exceeded with url: /data/2.5/forecast?lat=47.1667&lon=89.9&appid=004d182648179f8a0ea148f56c0840ea&units=metric&lang=zh_cn (Caused by ConnectTimeoutError(<HTTPSConnection(host='api.openweathermap.org', port=443) at 0x1e68cf8e690>, 'Connection to api.openweathermap.org timed out. (connect timeout=10)'))
+2026-02-11 16:29:20,233 - weather_updater - INFO - 成功保存天气数据到数据库
+2026-02-11 16:29:20,233 - weather_updater - INFO - 成功获取并保存可可托海的天气数据
+2026-02-11 16:29:20,234 - weather_updater - INFO - 正在获取禾木的天气数据...
+2026-02-11 16:29:30,241 - weather_updater - ERROR - 获取当前天气数据失败: HTTPSConnectionPool(host='api.openweathermap.org', port=443): Max retries exceeded with url: /data/2.5/weather?lat=48.5&lon=87.4167&appid=004d182648179f8a0ea148f56c0840ea&units=metric&lang=zh_cn (Caused by ConnectTimeoutError(<HTTPSConnection(host='api.openweathermap.org', port=443) at 0x1e68cf8ed20>, 'Connection to api.openweathermap.org timed out. (connect timeout=10)'))
+2026-02-11 16:29:40,254 - weather_updater - ERROR - 获取天气预报数据失败: HTTPSConnectionPool(host='api.openweathermap.org', port=443): Max retries exceeded with url: /data/2.5/forecast?lat=48.5&lon=87.4167&appid=004d182648179f8a0ea148f56c0840ea&units=metric&lang=zh_cn (Caused by ConnectTimeoutError(<HTTPSConnection(host='api.openweathermap.org', port=443) at 0x1e68cf8e1e0>, 'Connection to api.openweathermap.org timed out. (connect timeout=10)'))
+2026-02-11 16:29:40,264 - weather_updater - INFO - 成功保存天气数据到数据库
+2026-02-11 16:29:40,264 - weather_updater - INFO - 成功获取并保存禾木的天气数据
+2026-02-11 16:29:40,264 - weather_updater - INFO - 所有雪场天气数据更新完成
+2026-02-11 16:29:40,265 - weather_updater - INFO - 天气数据更新完成，退出程序
+2026-02-11 16:43:54,850 - weather_updater - INFO - 天气数据更新调度器已启动，每天4次自动更新
+2026-02-11 16:43:54,854 - weather_updater - INFO - 正在获取北大湖的天气数据...
+2026-02-11 16:44:04,873 - weather_updater - ERROR - 获取当前天气数据失败: HTTPSConnectionPool(host='api.openweathermap.org', port=443): Max retries exceeded with url: /data/2.5/weather?lat=43.46072402&lon=126.616401&appid=004d182648179f8a0ea148f56c0840ea&units=metric&lang=zh_cn (Caused by ConnectTimeoutError(<HTTPSConnection(host='api.openweathermap.org', port=443) at 0x230895c5490>, 'Connection to api.openweathermap.org timed out. (connect timeout=10)'))
+2026-02-11 16:44:14,889 - weather_updater - ERROR - 获取天气预报数据失败: HTTPSConnectionPool(host='api.openweathermap.org', port=443): Max retries exceeded with url: /data/2.5/forecast?lat=43.46072402&lon=126.616401&appid=004d182648179f8a0ea148f56c0840ea&units=metric&lang=zh_cn (Caused by ConnectTimeoutError(<HTTPSConnection(host='api.openweathermap.org', port=443) at 0x230895c5b20>, 'Connection to api.openweathermap.org timed out. (connect timeout=10)'))
+2026-02-11 16:44:14,909 - weather_updater - INFO - 成功保存天气数据到数据库
+2026-02-11 16:44:14,909 - weather_updater - INFO - 成功获取并保存北大湖的天气数据
+2026-02-11 16:44:14,909 - weather_updater - INFO - 正在获取松花湖的天气数据...
+2026-02-11 16:44:24,919 - weather_updater - ERROR - 获取当前天气数据失败: HTTPSConnectionPool(host='api.openweathermap.org', port=443): Max retries exceeded with url: /data/2.5/weather?lat=43.69481&lon=126.633613&appid=004d182648179f8a0ea148f56c0840ea&units=metric&lang=zh_cn (Caused by ConnectTimeoutError(<HTTPSConnection(host='api.openweathermap.org', port=443) at 0x23089601880>, 'Connection to api.openweathermap.org timed out. (connect timeout=10)'))
+2026-02-11 16:44:34,934 - weather_updater - ERROR - 获取天气预报数据失败: HTTPSConnectionPool(host='api.openweathermap.org', port=443): Max retries exceeded with url: /data/2.5/forecast?lat=43.69481&lon=126.633613&appid=004d182648179f8a0ea148f56c0840ea&units=metric&lang=zh_cn (Caused by ConnectTimeoutError(<HTTPSConnection(host='api.openweathermap.org', port=443) at 0x23089601c10>, 'Connection to api.openweathermap.org timed out. (connect timeout=10)'))
+2026-02-11 16:44:34,943 - weather_updater - INFO - 成功保存天气数据到数据库
+2026-02-11 16:44:34,943 - weather_updater - INFO - 成功获取并保存松花湖的天气数据
+2026-02-11 16:44:34,943 - weather_updater - INFO - 正在获取可可托海的天气数据...
+2026-02-11 16:44:44,955 - weather_updater - ERROR - 获取当前天气数据失败: HTTPSConnectionPool(host='api.openweathermap.org', port=443): Max retries exceeded with url: /data/2.5/weather?lat=47.211545&lon=90.0528&appid=004d182648179f8a0ea148f56c0840ea&units=metric&lang=zh_cn (Caused by ConnectTimeoutError(<HTTPSConnection(host='api.openweathermap.org', port=443) at 0x23089602960>, 'Connection to api.openweathermap.org timed out. (connect timeout=10)'))
+2026-02-11 16:44:54,961 - weather_updater - ERROR - 获取天气预报数据失败: HTTPSConnectionPool(host='api.openweathermap.org', port=443): Max retries exceeded with url: /data/2.5/forecast?lat=47.211545&lon=90.0528&appid=004d182648179f8a0ea148f56c0840ea&units=metric&lang=zh_cn (Caused by ConnectTimeoutError(<HTTPSConnection(host='api.openweathermap.org', port=443) at 0x230896028a0>, 'Connection to api.openweathermap.org timed out. (connect timeout=10)'))
+2026-02-11 16:44:54,970 - weather_updater - INFO - 成功保存天气数据到数据库
+2026-02-11 16:44:54,970 - weather_updater - INFO - 成功获取并保存可可托海的天气数据
+2026-02-11 16:44:54,970 - weather_updater - INFO - 正在获取禾木的天气数据...
+2026-02-11 16:45:04,979 - weather_updater - ERROR - 获取当前天气数据失败: HTTPSConnectionPool(host='api.openweathermap.org', port=443): Max retries exceeded with url: /data/2.5/weather?lat=48.5492354&lon=87.5470512&appid=004d182648179f8a0ea148f56c0840ea&units=metric&lang=zh_cn (Caused by ConnectTimeoutError(<HTTPSConnection(host='api.openweathermap.org', port=443) at 0x23089603110>, 'Connection to api.openweathermap.org timed out. (connect timeout=10)'))
+2026-02-11 16:45:14,988 - weather_updater - ERROR - 获取天气预报数据失败: HTTPSConnectionPool(host='api.openweathermap.org', port=443): Max retries exceeded with url: /data/2.5/forecast?lat=48.5492354&lon=87.5470512&appid=004d182648179f8a0ea148f56c0840ea&units=metric&lang=zh_cn (Caused by ConnectTimeoutError(<HTTPSConnection(host='api.openweathermap.org', port=443) at 0x23089602330>, 'Connection to api.openweathermap.org timed out. (connect timeout=10)'))
+2026-02-11 16:45:14,997 - weather_updater - INFO - 成功保存天气数据到数据库
+2026-02-11 16:45:14,997 - weather_updater - INFO - 成功获取并保存禾木的天气数据
+2026-02-11 16:45:14,997 - weather_updater - INFO - 所有雪场天气数据更新完成
