@@ -25,10 +25,10 @@ class WeatherUpdater:
     def __init__(self):
         # 雪场信息映射，包含经纬度和名称
         self.resort_info_map = {
-            '北大湖': {'name': 'Beidahu', 'lat': 43.46072402, 'lon': 126.616401},
+            '北大湖': {'name': 'Beidahu', 'lat': 43.460724, 'lon': 126.616401},
             '松花湖': {'name': 'SonghuaLake', 'lat': 43.694810, 'lon': 126.633613},
             '可可托海': {'name': 'Koktokay', 'lat': 47.211545, 'lon': 90.05280},
-            '禾木': {'name': 'Hemu', 'lat': 48.5492354, 'lon': 87.5470512}
+            '禾木': {'name': 'Hemu', 'lat': 48.549235, 'lon': 87.547051}
         }
         
         # OpenWeatherMap API配置
@@ -47,7 +47,7 @@ class WeatherUpdater:
             # 获取雪场的经纬度信息
             resort_info = self.resort_info_map.get(resort_name)
             if not resort_info:
-                logger.error(f"未找到{resort_name}的经纬度信息")
+                print(f"未找到{resort_name}的经纬度信息")
                 # 为该雪场保存默认数据
                 self.save_weather_to_db(resort_id, None, None)
                 logger.info(f"为{resort_name}保存默认天气数据")
@@ -69,7 +69,7 @@ class WeatherUpdater:
             return True
             
         except Exception as e:
-            logger.error(f"获取{resort_name}天气数据失败: {str(e)}")
+            print(f"获取{resort_name}天气数据失败: {str(e)}")
             # 即使获取失败，也为该雪场保存默认数据
             self.save_weather_to_db(resort_id, None, None)
             logger.info(f"为{resort_name}保存默认天气数据")
@@ -89,14 +89,14 @@ class WeatherUpdater:
                 'units': 'metric',
                 'lang': 'zh_cn'
             }
-            
+            print('whl--weather11', params)
             # 发送请求
-            response = requests.get(url, params=params, timeout=10)
+            response = requests.get(url, params=params, timeout=100)
+            print('whl--weather22', response)
             response.raise_for_status()
-            
             # 解析响应数据
             data = response.json()
-            
+            print('whl--weather333', data)
             # 提取当前天气信息
             current_weather = {
                 'temperature': int(data['main']['temp']),
@@ -111,7 +111,7 @@ class WeatherUpdater:
             return current_weather
             
         except Exception as e:
-            logger.error(f"获取当前天气数据失败: {str(e)}")
+            print(f"获取当前天气数据失败: {str(e)}")
             return None
     
     def get_forecast_weather(self, lat, lon):
@@ -130,12 +130,12 @@ class WeatherUpdater:
             }
             
             # 发送请求
-            response = requests.get(url, params=params, timeout=10)
+            response = requests.get(url, params=params, timeout=100)
             response.raise_for_status()
             
             # 解析响应数据
             data = response.json()
-            
+            print('whl---forecasts', data)
             # 按天整理预报数据
             daily_forecasts = {}
             
@@ -187,7 +187,7 @@ class WeatherUpdater:
             return forecast
             
         except Exception as e:
-            logger.error(f"获取天气预报数据失败: {str(e)}")
+            print(f"获取天气预报数据失败: {str(e)}")
             return []
     
     def degrees_to_direction(self, degrees):
@@ -206,6 +206,8 @@ class WeatherUpdater:
             try:
                 # 为无法获取数据的雪场提供默认数据
                 if not current_weather:
+                    logger.error('not have current_weather')
+                    return 'not have current_weather'
                     current_weather = {
                         'temperature': -10,
                         'wind_speed': 10,
@@ -218,7 +220,7 @@ class WeatherUpdater:
                 
                 # 保存当前天气
                 # 检查是否已存在当前天气记录
-                existing_current = CurrentWeather.query.filter_by(resort_id=resort_id).first()
+                existing_current = db.session.query(CurrentWeather).filter_by(resort_id=resort_id).first()
                 
                 if existing_current:
                     # 更新现有记录
@@ -267,7 +269,7 @@ class WeatherUpdater:
                         continue
                     
                     # 检查是否已存在该日期的记录
-                    existing_forecast = Weather.query.filter_by(
+                    existing_forecast = db.session.query(Weather).filter_by(
                         resort_id=resort_id,
                         date=forecast_date
                     ).first()
@@ -300,7 +302,7 @@ class WeatherUpdater:
                 logger.info(f"成功保存天气数据到数据库")
                 
             except Exception as e:
-                logger.error(f"保存天气数据到数据库失败: {str(e)}")
+                print(f"保存天气数据到数据库失败: {str(e)}")
                 db.session.rollback()
     
     def update_all_resorts(self):
@@ -321,7 +323,7 @@ class WeatherUpdater:
             
             # 检查并添加缺失的雪场
             for resort_id, resort_name in expected_resorts.items():
-                existing_resort = Resort.query.get(resort_id)
+                existing_resort = db.session.get(Resort, resort_id)
                 if not existing_resort:
                     new_resort = Resort(id=resort_id, name=resort_name)
                     db.session.add(new_resort)
@@ -331,7 +333,7 @@ class WeatherUpdater:
             if db.session.new:
                 db.session.commit()
                 # 重新获取所有雪场
-                resorts = Resort.query.all()
+                resorts = db.session.query(Resort).all()
             
             # 如果仍然没有雪场，使用默认数据
             if not resorts:
