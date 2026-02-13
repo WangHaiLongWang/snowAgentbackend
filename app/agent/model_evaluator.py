@@ -1,14 +1,26 @@
 import base64
 import os
 import requests
-from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage
+from app.agent.llm_manager import llm_manager
 
 class ModelEvaluator:
-    def __init__(self):
+    def __init__(self, llm_provider='openai', llm_model=None):
         # 初始化大语言模型
-        # 注意：实际项目中需要从环境变量或配置文件中读取API密钥
-        self.llm = None
+        self.llm_provider = llm_provider
+        self.llm_model = llm_model
+        self.llm = self._init_llm()
+    
+    def _init_llm(self):
+        """
+        初始化LLM模型
+        """
+        try:
+            return llm_manager.get_llm(self.llm_provider, self.llm_model)
+        except Exception as e:
+            # 如果初始化失败，返回None，使用模拟回复
+            print(f"Failed to initialize LLM: {str(e)}")
+            return None
     
     def evaluate(self, frames, pose_data, ski_type, skill_level):
         """

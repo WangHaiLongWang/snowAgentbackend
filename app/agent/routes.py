@@ -8,6 +8,7 @@ from app.agent.pose_estimator import PoseEstimator
 from app.agent.model_evaluator import ModelEvaluator
 from app.agent.agent_memory import AgentMemory
 from app.agent.chat_manager import ChatManager
+from app.agent.llm_manager import llm_manager
 
 # 创建蓝图
 bp = Blueprint('agent', __name__, url_prefix='/api/agent')
@@ -15,9 +16,47 @@ bp = Blueprint('agent', __name__, url_prefix='/api/agent')
 # 初始化各个模块
 video_processor = VideoProcessor()
 pose_estimator = PoseEstimator()
-model_evaluator = ModelEvaluator()
 agent_memory = AgentMemory()
-chat_manager = ChatManager(agent_memory)
+
+# 创建模型管理器的全局实例字典，用于存储不同用户的ChatManager实例
+chat_managers = {}
+
+# 获取或创建ChatManager实例
+def get_chat_manager(user_id, llm_provider='openai', llm_model=None):
+    """
+    获取或创建ChatManager实例
+    
+    Args:
+        user_id: 用户ID
+        llm_provider: LLM提供商
+        llm_model: LLM模型名称
+        
+    Returns:
+        chat_manager: ChatManager实例
+    """
+    key = f"{user_id}_{llm_provider}_{llm_model or 'default'}"
+    if key not in chat_managers:
+        chat_managers[key] = ChatManager(agent_memory, llm_provider, llm_model)
+    return chat_managers[key]
+
+# 获取或创建ModelEvaluator实例
+def get_model_evaluator(llm_provider='openai', llm_model=None):
+    """
+    获取或创建ModelEvaluator实例
+    
+    Args:
+        llm_provider: LLM提供商
+        llm_model: LLM模型名称
+        
+    Returns:
+        model_evaluator: ModelEvaluator实例
+    """
+    key = f"{llm_provider}_{llm_model or 'default'}"
+    if not hasattr(current_app, 'model_evaluators'):
+        current_app.model_evaluators = {}
+    if key not in current_app.model_evaluators:
+        current_app.model_evaluators[key] = ModelEvaluator(llm_provider, llm_model)
+    return current_app.model_evaluators[key]
 
 
 @bp.route('/video/upload', methods=['POST'])
@@ -160,6 +199,17 @@ def process_video(task_id):
         type: string
         required: true
         description: 任务ID
+      - name: llm
+        in: body
+        schema:
+          type: object
+          properties:
+            llm_provider:
+              type: string
+              description: LLM提供商 (openai/google/qianwen)
+            llm_model:
+              type: string
+              description: LLM模型名称
     responses:
       200:
         description: 分析任务已启动
@@ -179,6 +229,11 @@ def process_video(task_id):
         task_info['status'] = 'processing'
         task_info['message'] = '视频分析中...'
         
+        # 获取LLM配置
+        data = request.get_json() or {}
+        llm_provider = data.get('llm_provider', 'openai')
+        llm_model = data.get('llm_model', None)
+        
         # 异步处理视频（这里简化处理，实际项目中应该使用任务队列）
         def process_task():
             try:
@@ -195,6 +250,7 @@ def process_video(task_id):
                 task_info['message'] = '正在分析姿态...'
                 
                 # 3. 模型评价
+                model_evaluator = get_model_evaluator(llm_provider, llm_model)
                 evaluation = model_evaluator.evaluate(frames, pose_data, task_info['ski_type'], task_info['skill_level'])
                 task_info['evaluation'] = evaluation
                 task_info['status'] = 'completed'
@@ -285,6 +341,12 @@ def send_chat_message():
             user_id:
               type: string
               description: 用户ID
+            llm_provider:
+              type: string
+              description: LLM提供商 (openai/google/qianwen)
+            llm_model:
+              type: string
+              description: LLM模型名称
     responses:
       200:
         description: 聊天响应
@@ -302,9 +364,14 @@ def send_chat_message():
         data = request.get_json()
         message = data.get('message', '')
         user_id = data.get('user_id', 'default')
+        llm_provider = data.get('llm_provider', 'openai')
+        llm_model = data.get('llm_model', None)
         
         if not message:
             return jsonify({'error': 'No message provided'}), 400
+        
+        # 获取ChatManager实例
+        chat_manager = get_chat_manager(user_id, llm_provider, llm_model)
         
         # 处理聊天消息
         response = chat_manager.handle_message(message, user_id)
@@ -410,6 +477,12 @@ def generate_plan():
             goals:
               type: string
               description: 学习目标
+            llm_provider:
+              type: string
+              description: LLM提供商 (openai/google/qianwen)
+            llm_model:
+              type: string
+              description: LLM模型名称
     responses:
       200:
         description: 学习计划
@@ -426,6 +499,11 @@ def generate_plan():
         ski_type = data.get('ski_type', '双板')
         skill_level = data.get('skill_level', '中级')
         goals = data.get('goals', '提高技术水平')
+        llm_provider = data.get('llm_provider', 'openai')
+        llm_model = data.get('llm_model', None)
+        
+        # 获取ChatManager实例
+        chat_manager = get_chat_manager(user_id, llm_provider, llm_model)
         
         # 生成学习计划
         plan = chat_manager.generate_learning_plan(ski_type, skill_level, goals, user_id)
