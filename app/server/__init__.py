@@ -32,8 +32,10 @@ def create_app(config_name: str = "default") -> Flask:
 
     # 注册蓝图（统一 API，无模板渲染）
     from app.control import bp as api_bp
+    from app.agent import bp as agent_bp
 
     app.register_blueprint(api_bp)
+    app.register_blueprint(agent_bp)
 
     # 轻量级初始化：自动建表 + 填充初始数据（如需更严谨建议引入 Flask-Migrate）
     with app.app_context():
