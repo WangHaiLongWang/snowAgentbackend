@@ -15,9 +15,9 @@ lxml==4.9.3
 bs4==0.0.2
 
 # Agent dependencies
-langchain==0.1.13
-langchain-openai==0.1.6
-langchain-community==0.0.29
+langchain==0.1.20
+langchain-openai==0.1.14
+langchain-community==0.0.48
 opencv-python==4.8.1.78
 mediapipe==0.10.32
 Pillow==10.1.0

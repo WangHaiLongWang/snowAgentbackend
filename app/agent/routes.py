@@ -234,6 +234,14 @@ def process_video(task_id):
         llm_provider = data.get('llm_provider', 'openai')
         llm_model = data.get('llm_model', None)
         
+        # 检查提供商是否可用
+        if llm_provider not in llm_manager.models:
+            # 特别处理千问模型的情况
+            if llm_provider == 'qianwen':
+                return jsonify({'error': 'Qianwen model is not available. Please use OpenAI model instead.'}), 400
+            else:
+                return jsonify({'error': f'Unsupported LLM provider: {llm_provider}'}), 400
+        
         # 异步处理视频（这里简化处理，实际项目中应该使用任务队列）
         def process_task():
             try:
@@ -370,6 +378,14 @@ def send_chat_message():
         if not message:
             return jsonify({'error': 'No message provided'}), 400
         
+        # 检查提供商是否可用
+        if llm_provider not in llm_manager.models:
+            # 特别处理千问模型的情况
+            if llm_provider == 'qianwen':
+                return jsonify({'error': 'Qianwen model is not available. Please use OpenAI model instead.'}), 400
+            else:
+                return jsonify({'error': f'Unsupported LLM provider: {llm_provider}'}), 400
+        
         # 获取ChatManager实例
         chat_manager = get_chat_manager(user_id, llm_provider, llm_model)
         
@@ -501,6 +517,14 @@ def generate_plan():
         goals = data.get('goals', '提高技术水平')
         llm_provider = data.get('llm_provider', 'openai')
         llm_model = data.get('llm_model', None)
+        
+        # 检查提供商是否可用
+        if llm_provider not in llm_manager.models:
+            # 特别处理千问模型的情况
+            if llm_provider == 'qianwen':
+                return jsonify({'error': 'Qianwen model is not available. Please use OpenAI model instead.'}), 400
+            else:
+                return jsonify({'error': f'Unsupported LLM provider: {llm_provider}'}), 400
         
         # 获取ChatManager实例
         chat_manager = get_chat_manager(user_id, llm_provider, llm_model)
