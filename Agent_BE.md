@@ -22,3 +22,4 @@ current_weather_data数据为 [{'temperature': '-25', 'wind': '35', 'weather': '
 17. 在weather_updater.py 文件中进行更新，使用openweathermap的api接口，获取相关雪场（北大湖、可可托海、禾木、松花湖）的天气数据，每天4次自动更新，将其添加到对应的数据库中，并且根据相关雪场的天气数据，在control/routes.py文件中生成对应的API接口，用于前端页面调用，更新前端页面的天气内容， openweathermap api 文档 https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API key}&units=metric未来5天每3小时预报：https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={API key}&units=metric. 对应的API key 为 004d182648179f8a0ea148f56c0840ea
 18. 在task 文件夹进行更新，支撑 weather_updater.py 文件在系统中进行调用和更新，并且在服务器中也进行调用。
 19. 在backend文件夹中涉及agent文件夹下的内容，需要使用LLM模型，进行相关的处理，进行统一的初始化，支持用户选择相关模型，常见的llm模型，例如OpenAI的gpt-3.5-turbo，gpt-4，Google，千问等等。在.env文件中进行相关配置，我来更新相关具体key。
+20. 在chat_manager.py 文件中进行更新，去除相关模拟回复，使用真实的LLM进行处理，根据用户的问题，调用LLM模型，返回相关的回复。特别针对于_generate_response 和 analyze_video方法

@@ -74,18 +74,24 @@ class ChatManager:
         # 获取用户的对话记忆
         memory = self.agent_memory.get_memory(user_id)
         
-        # 构建对话链
-        chain = (
-            RunnablePassthrough.assign(
-                chat_history=lambda _: memory.chat_memory.messages
+        # 检查LLM是否可用
+        llm = self._get_llm()
+        if not llm:
+            # 如果LLM不可用，返回错误消息
+            response = "抱歉，我暂时无法处理您的请求。请检查模型配置并稍后再试。"
+        else:
+            # 构建对话链
+            chain = (
+                RunnablePassthrough.assign(
+                    chat_history=lambda _: memory.chat_memory.messages
+                )
+                | self.prompt
+                | llm
+                | StrOutputParser()
             )
-            | self.prompt
-            | self._get_llm()
-            | StrOutputParser()
-        )
-        
-        # 生成回复
-        response = self._generate_response(chain, message)
+            
+            # 生成回复
+            response = self._generate_response(chain, message)
         
         # 保存对话到记忆
         self.agent_memory.add_message(user_id, "user", message)
@@ -134,9 +140,13 @@ class ChatManager:
             llm: 大语言模型对象
         """
         if not self.llm:
-            # 注意：实际项目中需要从环境变量或配置文件中读取API密钥
-            # 这里使用模拟的LLM
-            self.llm = None
+            # 如果LLM未初始化，尝试重新初始化
+            try:
+                self.llm = llm_manager.get_llm(self.llm_provider, self.llm_model)
+            except Exception as e:
+                print(f"Failed to initialize LLM: {str(e)}")
+                # 如果初始化失败，返回None
+                self.llm = None
         
         return self.llm
     
@@ -151,30 +161,14 @@ class ChatManager:
         Returns:
             response: 助手回复
         """
-        # 注意：实际项目中应该使用真实的LLM
-        # 这里使用模拟的回复
-        
-        # 基于用户消息生成模拟回复
-        if any(keyword in message.lower() for keyword in ['你好', 'hi', 'hello', '开始']):
-            return "你好！我是你的专业滑雪教练。很高兴为你提供帮助。请问你是单板还是双板滑雪者？当前的技术水平如何？有什么具体的滑雪问题或学习目标吗？"
-        
-        elif any(keyword in message.lower() for keyword in ['单板', '双板']):
-            return "了解了！单板和双板各有特色，都非常有趣。请问你目前的技术水平如何？是初级、中级还是高级？你最近在练习什么技巧，或者有什么具体的问题需要帮助？"
-        
-        elif any(keyword in message.lower() for keyword in ['技术', '技巧', '动作']):
-            return "关于滑雪技术，我可以给你提供详细的指导。请问你具体想了解哪方面的技巧？比如转弯、刹车、跳跃等。另外，你当前的技术水平是什么样的？这样我可以给你更有针对性的建议。"
-        
-        elif any(keyword in message.lower() for keyword in ['学习计划', '练习', '进步']):
-            return "制定学习计划是提高滑雪技术的重要环节。为了给你制定合适的计划，我需要了解：1. 你是单板还是双板？2. 当前的技术水平？3. 你的学习目标是什么？4. 每周大概能有多少时间练习？"
-        
-        elif any(keyword in message.lower() for keyword in ['装备', '雪板', '雪鞋']):
-            return "装备对于滑雪体验和技术发挥非常重要。请问你是想了解初学者的装备选择，还是需要根据你的技术水平推荐更专业的装备？另外，你是单板还是双板滑雪者？"
-        
-        elif any(keyword in message.lower() for keyword in ['安全', '危险', '受伤']):
-            return "滑雪安全是第一位的！以下是一些重要的安全提示：1. 始终佩戴头盔和必要的护具；2. 选择适合自己水平的雪道；3. 控制速度，特别是在人多或不熟悉的区域；4. 遵守雪道规则，尊重其他滑雪者；5. 了解基本的急救知识。请问你有具体的安全问题吗？"
-        
-        else:
-            return "感谢你的问题！作为专业的滑雪教练，我可以为你提供关于滑雪技术、装备、学习计划、安全等方面的建议。请问你具体想了解什么？或者你可以上传你的滑雪视频，我会为你分析动作并提供改进建议。"
+        try:
+            # 使用真实的LLM生成回复
+            response = chain.invoke({"input": message})
+            return response
+        except Exception as e:
+            print(f"Failed to generate response: {str(e)}")
+            # 如果LLM调用失败，返回错误消息
+            return "抱歉，我暂时无法处理您的请求。请稍后再试。"
     
     def analyze_video(self, video_path, ski_type, skill_level, user_id):
         """
@@ -189,27 +183,73 @@ class ChatManager:
         Returns:
             analysis: 分析结果
         """
-        # 这里应该调用视频处理和分析模块
-        # 为了简化，这里返回模拟的分析结果
+        # 构建视频分析的prompt
+        video_analysis_prompt = f"""请分析以下滑雪视频并提供专业评价：
+
+视频路径：{video_path}
+滑雪类型：{ski_type}
+滑雪者水平：{skill_level}
+
+请从以下几个方面进行分析：
+1. 技术评价：分析滑雪者的姿势、动作、平衡等技术方面的表现
+2. 改进建议：指出需要改进的地方并提供具体的改进方法
+3. 学习计划：基于当前水平，建议下一步的学习重点
+4. 安全提示：提供相关的安全建议
+5. 总体评分：给滑雪者的表现打分（0-100）
+
+请提供详细、专业、有针对性的分析和建议。
+"""
         
-        analysis = {
-            'message': '视频分析完成！',
-            'evaluation': {
-                'technical_evaluation': '你的基本姿势保持良好，膝盖微屈，身体重心适中。转弯时的身体跟随动作基本协调，但在高速转弯时上半身过于僵硬，缺乏柔韧性。',
-                'improvement_suggestions': '1. 加强核心力量训练，提高身体稳定性\n2. 练习转弯时的身体跟随动作，保持上半身放松\n3. 注意手臂的位置，保持自然摆动\n4. 增加平衡训练，提高在不平 terrain 上的稳定性',
-                'learning_plan': '基于当前水平，建议下一步学习：\n1. 中级转弯技巧：练习更流畅的Carving转弯\n2. 速度控制：学习使用身体姿势控制速度\n3. 地形适应：练习在不同坡度和雪质上的滑行\n4. 安全技巧：学习紧急制动和规避障碍物',
-                'safety_tips': '1. 始终保持对前方的观察，提前规划路线\n2. 控制速度，特别是在不熟悉的雪道上\n3. 佩戴必要的护具，如头盔、护膝等\n4. 遵守雪道规则，尊重其他滑雪者',
-                'overall_rating': '良好（75/100）'
+        # 使用LLM生成分析结果
+        try:
+            # 获取用户的对话记忆
+            memory = self.agent_memory.get_memory(user_id)
+            
+            # 构建对话链
+            chain = (
+                RunnablePassthrough.assign(
+                    chat_history=lambda _: memory.chat_memory.messages
+                )
+                | self.prompt
+                | self._get_llm()
+                | StrOutputParser()
+            )
+            
+            # 生成分析结果
+            analysis_text = self._generate_response(chain, video_analysis_prompt)
+            
+            # 构建分析结果字典
+            analysis = {
+                'message': '视频分析完成！',
+                'evaluation': {
+                    'technical_evaluation': analysis_text,
+                    'improvement_suggestions': '',
+                    'learning_plan': '',
+                    'safety_tips': '',
+                    'overall_rating': ''
+                }
             }
-        }
-        
-        # 保存分析结果到用户历史
-        ski_data = {
-            'video_path': video_path,
-            'ski_type': ski_type,
-            'skill_level': skill_level,
-            'analysis': analysis
-        }
-        self.agent_memory.add_ski_history(user_id, ski_data)
-        
-        return analysis
+            
+            # 保存分析结果到用户历史
+            ski_data = {
+                'video_path': video_path,
+                'ski_type': ski_type,
+                'skill_level': skill_level,
+                'analysis': analysis
+            }
+            self.agent_memory.add_ski_history(user_id, ski_data)
+            
+            return analysis
+        except Exception as e:
+            print(f"Failed to analyze video: {str(e)}")
+            # 如果分析失败，返回错误消息
+            return {
+                'message': '视频分析失败',
+                'evaluation': {
+                    'technical_evaluation': '抱歉，视频分析暂时无法完成。请稍后再试。',
+                    'improvement_suggestions': '',
+                    'learning_plan': '',
+                    'safety_tips': '',
+                    'overall_rating': ''
+                }
+            }
