@@ -1,62 +1,64 @@
-from langchain.memory import ConversationBufferMemory
+from langchain_core.chat_history import BaseChatMessageHistory
+from langchain_core.messages import HumanMessage, AIMessage
+from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_openai import ChatOpenAI
 import json
 import os
 from datetime import datetime
 
+# 自定义聊天历史存储类
+class InMemoryChatHistory(BaseChatMessageHistory):
+    def __init__(self):
+        self.messages = []
+    
+    def add_message(self, message):
+        self.messages.append(message)
+    
+    def clear(self):
+        self.messages = []
+
 class AgentMemory:
     def __init__(self):
-        # 初始化对话记忆存储
-        self.memories = {}
+        # 初始化对话历史存储
+        self.chat_histories = {}
         # 初始化用户滑雪历史存储
         self.ski_history = {}
         # 初始化用户学习计划存储
         self.learning_plans = {}
     
-    def get_memory(self, user_id):
+    def get_session_history(self, user_id):
         """
-        获取用户的对话记忆
+        获取用户的会话历史
         
         Args:
             user_id: 用户ID
             
         Returns:
-            memory: 对话记忆对象
+            session_history: 会话历史对象
         """
-        if user_id not in self.memories:
-            # 创建新的对话记忆
-            self.memories[user_id] = ConversationBufferMemory(
-                return_messages=True,
-                memory_key="chat_history",
-                input_key="input"
-            )
+        if user_id not in self.chat_histories:
+            # 创建新的会话历史
+            self.chat_histories[user_id] = InMemoryChatHistory()
         
-        return self.memories[user_id]
+        return self.chat_histories[user_id]
     
     def add_message(self, user_id, role, content):
         """
-        添加消息到对话记忆
+        添加消息到对话历史
         
         Args:
             user_id: 用户ID
             role: 角色（user/assistant）
             content: 消息内容
         """
-        memory = self.get_memory(user_id)
+        session_history = self.get_session_history(user_id)
         
         # 根据角色添加消息
         if role == "user":
-            memory.save_context({"input": content}, {"output": ""})
+            session_history.add_message(HumanMessage(content=content))
         elif role == "assistant":
-            # 获取最后一条消息
-            if memory.chat_memory.messages:
-                last_message = memory.chat_memory.messages[-1]
-                # 更新助手的回复
-                memory.chat_memory.messages[-1].content = content
-            else:
-                # 如果没有消息，创建一个新的
-                memory.save_context({"input": ""}, {"output": content})
+            session_history.add_message(AIMessage(content=content))
     
     def get_history(self, user_id):
         """
@@ -68,21 +70,21 @@ class AgentMemory:
         Returns:
             history: 对话历史列表
         """
-        if user_id not in self.memories:
+        if user_id not in self.chat_histories:
             return []
         
-        memory = self.memories[user_id]
+        session_history = self.chat_histories[user_id]
         history = []
         
         # 转换为前端可用的格式
-        for i, message in enumerate(memory.chat_memory.messages):
-            if i % 2 == 0:
+        for message in session_history.messages:
+            if isinstance(message, HumanMessage):
                 # 用户消息
                 history.append({
                     "role": "user",
                     "content": message.content
                 })
-            else:
+            elif isinstance(message, AIMessage):
                 # 助手消息
                 history.append({
                     "role": "assistant",
@@ -98,8 +100,8 @@ class AgentMemory:
         Args:
             user_id: 用户ID
         """
-        if user_id in self.memories:
-            del self.memories[user_id]
+        if user_id in self.chat_histories:
+            del self.chat_histories[user_id]
     
     def add_ski_history(self, user_id, ski_data):
         """
@@ -240,9 +242,9 @@ class AgentMemory:
         
         # 恢复对话历史
         if 'chat_history' in data:
-            memory = self.get_memory(user_id)
             # 清空现有历史
-            memory.clear()
+            if user_id in self.chat_histories:
+                del self.chat_histories[user_id]
             # 添加历史消息
             for msg in data['chat_history']:
                 self.add_message(user_id, msg['role'], msg['content'])
@@ -254,3 +256,20 @@ class AgentMemory:
         # 恢复学习计划
         if 'learning_plans' in data:
             self.learning_plans[user_id] = data['learning_plans']
+    
+    def create_runnable_with_history(self, runnable):
+        """
+        创建带消息历史的可运行对象
+        
+        Args:
+            runnable: 可运行对象
+            
+        Returns:
+            runnable_with_history: 带消息历史的可运行对象
+        """
+        return RunnableWithMessageHistory(
+            runnable=runnable,
+            get_session_history=self.get_session_history,
+            input_messages_key="input",
+            history_messages_key="chat_history"
+        )

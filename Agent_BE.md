@@ -23,3 +23,5 @@ current_weather_data数据为 [{'temperature': '-25', 'wind': '35', 'weather': '
 18. 在task 文件夹进行更新，支撑 weather_updater.py 文件在系统中进行调用和更新，并且在服务器中也进行调用。
 19. 在backend文件夹中涉及agent文件夹下的内容，需要使用LLM模型，进行相关的处理，进行统一的初始化，支持用户选择相关模型，常见的llm模型，例如OpenAI的gpt-3.5-turbo，gpt-4，Google，千问等等。在.env文件中进行相关配置，我来更新相关具体key。
 20. 在chat_manager.py 文件中进行更新，去除相关模拟回复，使用真实的LLM进行处理，根据用户的问题，调用LLM模型，返回相关的回复。特别针对于_generate_response 和 analyze_video方法
+
+21. 在app/agent中涉及到相关 from langchain.memory import ConversationBufferMemory 类，用于存储用户的对话历史，以及LLM模型的回复历史。使用 RunnableWithMessageHistory类进行替换，用于支持用户的对话历史记录。
