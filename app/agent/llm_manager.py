@@ -59,7 +59,7 @@ class LLMManager:
             temperature=0.7
         )
     
-    def _init_qianwen(self, model_name='qwen-plus'):
+    def _init_qianwen(self, model_name='qwen3.5-flash-2026-02-23'):
         """
         初始化千问模型（使用阿里云百炼的OpenAI兼容接口）
         """
@@ -123,7 +123,7 @@ class LLMManager:
             available_models['google'] = ['gemini-pro', 'gemini-ultra']
         
         if QianwenChat:
-            available_models['qianwen'] = ['qwen-turbo', 'qwen-plus', 'qwen-max', 'qwen-vision', 'qwen-flash-character', 'deepseek-v3.2', 'kimi-k2.5', 'glm-4.7', 'qwen3-max-2026-01-23', 'qwen3-vl-plus-2025-12-19', 'qwen-mt-lite', 'qwen3-max-preview']
+            available_models['qianwen'] = ['qwen3.5-27b', 'qwen3.5-flash-2026-02-23', 'qwen-max', 'qwen-vision', 'qwen-flash-character', 'deepseek-v3.2', 'kimi-k2.5', 'glm-4.7', 'qwen3-max-2026-01-23', 'qwen3-vl-plus-2025-12-19', 'qwen-mt-lite', 'qwen3-max-preview']
             
         return available_models
 
